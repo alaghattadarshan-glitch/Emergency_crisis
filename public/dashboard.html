@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emergency Control Center</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI';
+      background: linear-gradient(135deg, #0f172a, #020617);
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px;
+    }
+
+    .box {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      width: 30%;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .box:hover {
+      transform: scale(1.05);
+    }
+
+    .controls {
+      text-align: center;
+      margin: 20px;
+    }
+
+    input, select {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .high { border-left: 5px solid red; }
+    .medium { border-left: 5px solid orange; }
+    .low { border-left: 5px solid green; }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .Pending { background: orange; }
+    .Responding { background: #3b82f6; }
+    .Resolved { background: #22c55e; }
+
+    button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .btn1 {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn2 {
+      background: #22c55e;
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      opacity: 0.9;
+    }
+
+    .glow {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,0,0,0.3), transparent);
+      top: -50px;
+      right: -50px;
+      filter: blur(40px);
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>🚨 Emergency AI Control Center</header>
+
+<div class="stats">
+  <div class="box">Total<br><span id="total">0</span></div>
+  <div class="box">Active<br><span id="active">0</span></div>
+  <div class="box">Resolved<br><span id="resolved">0</span></div>
+</div>
+
+<div class="controls">
+  <input type="text" id="search" placeholder="Search location">
+  <select id="filter">
+    <option value="">All Status</option>
+    <option>Pending</option>
+    <option>Responding</option>
+    <option>Resolved</option>
+  </select>
+</div>
+
+<div class="container" id="list"></div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
