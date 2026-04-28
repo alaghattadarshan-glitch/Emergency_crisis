@@ -1,157 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Emergency Control Center</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI';
-      background: linear-gradient(135deg, #0f172a, #020617);
-      color: white;
-    }
-
-    header {
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-    }
-
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px;
-    }
-
-    .box {
-      background: rgba(255,255,255,0.05);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
-      width: 30%;
-      text-align: center;
-      transition: 0.3s;
-    }
-
-    .box:hover {
-      transform: scale(1.05);
-    }
-
-    .controls {
-      text-align: center;
-      margin: 20px;
-    }
-
-    input, select {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 8px;
-      border: none;
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card:hover {
-      transform: translateY(-5px) scale(1.02);
-    }
-
-    .high { border-left: 5px solid red; }
-    .medium { border-left: 5px solid orange; }
-    .low { border-left: 5px solid green; }
-
-    .status {
-      display: inline-block;
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-top: 5px;
-    }
-
-    .Pending { background: orange; }
-    .Responding { background: #3b82f6; }
-    .Resolved { background: #22c55e; }
-
-    button {
-      margin-top: 10px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: bold;
-    }
-
-    .btn1 {
-      background: #3b82f6;
-      color: white;
-    }
-
-    .btn2 {
-      background: #22c55e;
-      color: white;
-    }
-
-    button:hover {
-      transform: scale(1.1);
-      opacity: 0.9;
-    }
-
-    .glow {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(255,0,0,0.3), transparent);
-      top: -50px;
-      right: -50px;
-      filter: blur(40px);
-    }
-
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sapthagiri NPS Control Center</title>
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<header>🚨 Emergency AI Control Center</header>
-
-<div class="stats">
-  <div class="box">Total<br><span id="total">0</span></div>
-  <div class="box">Active<br><span id="active">0</span></div>
-  <div class="box">Resolved<br><span id="resolved">0</span></div>
+<!-- Login Overlay -->
+<div id="login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-darker); z-index: 1000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(20px);">
+  <div class="glass-card" style="width: 350px; text-align: center;">
+    <h2>Security Access</h2>
+    <p style="color: var(--text-muted); margin-bottom: 20px;">Enter the staff password to access the Control Center.</p>
+    <input type="password" id="admin-password" placeholder="Password" style="text-align: center;">
+    <button class="btn-primary" onclick="checkLogin()">Login</button>
+    <p id="login-error" style="color: var(--accent-red); margin-top: 15px; display: none;">Access Denied. Incorrect Password.</p>
+  </div>
 </div>
 
-<div class="controls">
-  <input type="text" id="search" placeholder="Search location">
-  <select id="filter">
-    <option value="">All Status</option>
-    <option>Pending</option>
-    <option>Responding</option>
-    <option>Resolved</option>
-  </select>
+<div id="dashboard-content" style="display: none;">
+  <header class="dashboard-header">
+    <h1>
+      <img src="https://admissions.snpsu.edu.in/ion_admission_snps/assets/images/SNPS_Logo.png" alt="Logo" class="header-logo">
+      Emergency Control Center
+    </h1>
+  </header>
+
+  <div class="dashboard-layout">
+    
+    <!-- Sidebar -->
+    <div class="dashboard-sidebar">
+      <!-- Sweeping Radar Element -->
+      <div class="radar-container" id="security-radar" title="Scanning Campus...">
+        <div class="radar-sweep"></div>
+        <div class="radar-blip" id="radar-blip"></div>
+      </div>
+
+      <div class="controls-bar glass-card" style="display: flex; flex-direction: column; gap: 20px;">
+        <h3 style="margin-top:0; margin-bottom: 5px; color: var(--text-main); font-size: 16px;">Command Filters</h3>
+        <input type="text" id="search" placeholder="🔍 Search location or type..." style="margin: 0;">
+        
+        <!-- Filter Pills -->
+        <div class="filter-pills" id="filter-container">
+          <button class="filter-pill active" data-filter="">All</button>
+          <button class="filter-pill" data-filter="Pending">Pending</button>
+          <button class="filter-pill" data-filter="Responding">Responding</button>
+          <button class="filter-pill" data-filter="Resolved">Resolved</button>
+        </div>
+      </div>
+
+      <!-- Predictive Analytics (Sidebar) -->
+      <div class="analytics-stack" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="stat-box" style="padding: 15px; display: flex; flex-direction: column;">
+          <h3 style="margin-top: 0; margin-bottom: 10px; color: #fff; font-size: 14px;">Status Overview</h3>
+          <div style="position: relative; height: 180px; width: 100%;">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        <div class="stat-box" style="padding: 15px; display: flex; flex-direction: column;">
+          <h3 style="margin-top: 0; margin-bottom: 10px; color: #fff; font-size: 14px;">Incidents by Category</h3>
+          <div style="position: relative; height: 180px; width: 100%;">
+            <canvas id="typeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-main">
+      <!-- Statistics -->
+      <div class="stats-grid">
+        <div class="stat-box glass-card">
+          <div class="stat-title">Total Incidents</div>
+          <div class="stat-value" id="total">0</div>
+        </div>
+        <div class="stat-box glass-card">
+          <div class="stat-title">Active Alerts</div>
+          <div class="stat-value" id="active" style="color: var(--accent-orange)">0</div>
+        </div>
+        <div class="stat-box glass-card">
+          <div class="stat-title">Resolved</div>
+          <div class="stat-value" id="resolved" style="color: var(--accent-green)">0</div>
+        </div>
+      </div>
+
+
+      <!-- Incident List -->
+      <div class="incidents-grid" id="list">
+        <!-- Incidents will be populated here by dashboard.js -->
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div class="container" id="list"></div>
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Scripts -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="dashboard.js"></script>
 
 </body>
 </html>
