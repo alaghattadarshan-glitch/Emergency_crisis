@@ -1,5 +1,5 @@
-const API = "http://localhost:3000";
-const socket = io(API);
+const API = "";
+const socket = io();
 
 // 🔔 SOUND ALERT
 const audio = new Audio("https://www.soundjay.com/buttons/beep-01a.mp3");

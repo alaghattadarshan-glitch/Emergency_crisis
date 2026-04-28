@@ -112,7 +112,7 @@ async function reportIncident() {
       description
     };
 
-    await fetch("http://localhost:3000/incident", {
+    await fetch("/incident", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
